@@ -24,6 +24,7 @@
 //    bytes[0] = hexStringToByte(@"71");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
     //[self.searilQueue addOperation:[self sendByteMessage:1]];
+    [self.autio setUartByteTransmit:0x4];
 }
 
 - (IBAction)kuaiman:(id)sender {
@@ -32,6 +33,7 @@
 //    bytes[0] = hexStringToByte(@"72");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
    // [self.searilQueue addOperation:[self sendByteMessage:2]];
+    [self.autio setUartByteTransmit:0x03];
 
     
 }
@@ -42,6 +44,7 @@
 //    bytes[0] = hexStringToByte(@"73");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
     //[self.searilQueue addOperation:[self sendByteMessage:3]];
+    [self.autio setUartByteTransmit:0x02];
 
     
 }
@@ -52,6 +55,7 @@
 //    bytes[0] = hexStringToByte(@"74");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
    // [self.searilQueue addOperation:[self sendByteMessage:3]];
+    [self.autio setUartByteTransmit:0x01];
 
     
 }
@@ -61,6 +65,7 @@
 //    bytes[0] = hexStringToByte(@"75");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
 // [self.searilQueue addOperation:[self sendByteMessage:5]];
+    [self.autio setUartByteTransmit:0x75];
     
 }
 
@@ -71,7 +76,7 @@
 //    _sendData = [NSData dataWithBytes:bytes length:1];
    // [self.searilQueue addOperation:[self sendByteMessage:6]];
 
-    
+    [self.autio setUartByteTransmit:0x76];
 }
 
 - (IBAction)jia:(id)sender {
@@ -84,6 +89,7 @@
         return;
     }
     _geer ++;
+    [self.autio setUartByteTransmit:_geer];
     //[self.searilQueue addOperation:[self sendByteMessage:_geer]];
 }
 - (IBAction)jie:(id)sender {
@@ -92,6 +98,7 @@
         return;
     }
     _geer --;
+    [self.autio setUartByteTransmit:_geer];
    // [self.searilQueue addOperation:[self sendByteMessage:_geer]];
     
 }
