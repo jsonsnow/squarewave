@@ -144,7 +144,7 @@ void propListener(	void *                  inClientData,
                 {
                     printf("This ReceiverAndMicrophone.......\n");
                     // MIC removed 耳机拔出
-                    THIS.mute = YES;
+                    THIS.mute = NO;
                     
                     // 插入设备
                     if([THIS->theDelegate respondsToSelector:@selector(hasDeviceInsert:)]) {

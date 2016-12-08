@@ -41,7 +41,7 @@
             //self.uartByteTransmit = sendData;
             self.autio.bytes = data;
             self.autio.sartBit = start;
-            //self.autio.newByte = TRUE;
+            self.autio.newByte = TRUE;
 
             
         }
