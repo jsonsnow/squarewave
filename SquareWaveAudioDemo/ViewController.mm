@@ -17,6 +17,75 @@
 @implementation ViewController
 
 
+-(NSBlockOperation *)sendByteMessage:(SignedByte* )data start:(BOOL)start{
+    
+    __block uint32_t i = 0;
+    __block SignedByte *sendData;
+    sendData = data;
+    NSBlockOperation *opertionOne = [NSBlockOperation blockOperationWithBlock:^{
+        
+        while(self.autio.newByte == TRUE) {
+            if( i<1000000 ) {
+                i++;
+                NSLog(@"----------");
+                //NSLog(@"can't write：%s___%d",__FILE__,__LINE__);
+                //[NSThread sleepForTimeInterval:1];
+            }
+            else {
+                return;
+            }
+        }
+        // waveformPeriod - 0.007
+        [NSThread sleepForTimeInterval:0.02 - 0.007];
+        if (self.autio.newByte == FALSE) {
+            //self.uartByteTransmit = sendData;
+            self.autio.bytes = data;
+            self.autio.sartBit = start;
+            //self.autio.newByte = TRUE;
+
+            
+        }
+        NSLog(@"write 0");
+        
+    }];
+    
+    return opertionOne;
+    
+}
+
+-(NSOperationQueue *)searilQueue {
+    
+    if (!_searilQueue) {
+        
+        _searilQueue = [[NSOperationQueue alloc] init];
+        _searilQueue.maxConcurrentOperationCount = 1;
+    }
+    
+    return _searilQueue;
+}
+
+-(void)sendData:(uint8_t)data {
+    
+    SignedByte byte1[4];
+    SignedByte byte2[4];
+    for (int i = 0; i < 8; i++) {
+        
+        int j = data >> i & (0x01);
+        
+        if (i <= 3) {
+            
+            byte1[i] = j;
+        } else {
+            byte2[i - 4] = j;
+        }
+        
+    }
+
+    [self.searilQueue addOperation:[self sendByteMessage:byte1 start:YES]];
+    [self.searilQueue addOperation:[self sendByteMessage:byte2 start:NO]];
+    //[self.autio setUartByteTransmit:0x4];
+
+}
 - (IBAction)qiaoji:(id)sender {
     
 //    bSend = YES;
@@ -24,7 +93,9 @@
 //    bytes[0] = hexStringToByte(@"71");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
     //[self.searilQueue addOperation:[self sendByteMessage:1]];
-    [self.autio setUartByteTransmit:0x4];
+   // uartByteTransmit = data;
+    [self sendData:0x71];
+   
 }
 
 - (IBAction)kuaiman:(id)sender {
@@ -33,7 +104,7 @@
 //    bytes[0] = hexStringToByte(@"72");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
    // [self.searilQueue addOperation:[self sendByteMessage:2]];
-    [self.autio setUartByteTransmit:0x03];
+   [self sendData:0x72];
 
     
 }
@@ -44,7 +115,7 @@
 //    bytes[0] = hexStringToByte(@"73");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
     //[self.searilQueue addOperation:[self sendByteMessage:3]];
-    [self.autio setUartByteTransmit:0x02];
+    [self sendData:0x01];
 
     
 }
@@ -55,7 +126,7 @@
 //    bytes[0] = hexStringToByte(@"74");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
    // [self.searilQueue addOperation:[self sendByteMessage:3]];
-    [self.autio setUartByteTransmit:0x01];
+   [self sendData:0x02];
 
     
 }
@@ -65,7 +136,7 @@
 //    bytes[0] = hexStringToByte(@"75");
 //    _sendData = [NSData dataWithBytes:bytes length:1];
 // [self.searilQueue addOperation:[self sendByteMessage:5]];
-    [self.autio setUartByteTransmit:0x75];
+   [self sendData:0x03];
     
 }
 
@@ -76,7 +147,7 @@
 //    _sendData = [NSData dataWithBytes:bytes length:1];
    // [self.searilQueue addOperation:[self sendByteMessage:6]];
 
-    [self.autio setUartByteTransmit:0x76];
+   [self sendData:0x04];
 }
 
 - (IBAction)jia:(id)sender {
@@ -89,7 +160,7 @@
         return;
     }
     _geer ++;
-    [self.autio setUartByteTransmit:_geer];
+    [self sendData:_geer];
     //[self.searilQueue addOperation:[self sendByteMessage:_geer]];
 }
 - (IBAction)jie:(id)sender {
@@ -98,7 +169,7 @@
         return;
     }
     _geer --;
-    [self.autio setUartByteTransmit:_geer];
+    [self sendData:_geer];
    // [self.searilQueue addOperation:[self sendByteMessage:_geer]];
     
 }

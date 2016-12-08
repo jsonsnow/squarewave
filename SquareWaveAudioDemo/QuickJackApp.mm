@@ -275,7 +275,7 @@ static OSStatus	PerformThru(
                                 uartByte = ((uartByte >> 1) + (sample << 7));
                                 bitNum += 1;
                                 parityRx += sample;
-                                 printf("the short and long is %d and %d diff:%d-----------%d,%d++++++++++++++%d phase2:%d\n",SHORT,LONG,(int)diff,uartByte,(int)sample,bitNum,(unsigned int)phase2);
+                                 //printf("the short and long is %d and %d diff:%d-----------%d,%d++++++++++++++%d phase2:%d\n",SHORT,LONG,(int)diff,uartByte,(int)sample,bitNum,(unsigned int)phase2);
 
     //                            printf("Bit %d value %ld diff %ld parity %d\n", bitNum, sample, diff, parityRx & 0x01);
 
@@ -284,13 +284,13 @@ static OSStatus	PerformThru(
                                 if(sample != (parityRx & 0x01))
                                 {
     #ifdef DECDEBUGBYTE
-                                    printf(" -- parity %d,  UartByte 0x%x\n", (int)sample, uartByte);
+                                   // printf(" -- parity %d,  UartByte 0x%x\n", (int)sample, uartByte);
     #endif
                                     decState = QUICK_JACK_STARTBIT;
                                     uartByte = 0;
                                 } else {
     #ifdef DECDEBUGBYTE
-                                    printf(" ++ good parity %d, UartByte 0x%x\n", (int)sample, uartByte);
+                                    //printf(" ++ good parity %d, UartByte 0x%x\n", (int)sample, uartByte);
     #endif
                                     
     //                                if([THIS->theDelegate respondsToSelector:@selector(receive:)]) {
@@ -342,7 +342,7 @@ static OSStatus	PerformThru(
                             decState = QUICK_JACK_STARTBIT;
                         } else {
                             // don't update the phase as we have to look for the next transition
-                            printf("don't update the phase as we have to look for the next transition int wave:%d\n",THIS.currentFrame);
+                           // printf("don't update the phase as we have to look for the next transition int wave:%d\n",THIS.currentFrame);
                             lastSample = sample;
                             continue;
                         }
@@ -497,7 +497,7 @@ static OSStatus	PerformThru(
                 THIS.newByte = FALSE;
             } else {
                 
-                for (int i = 4; i < 8; i ++) {
+                for (int i = 0; i < 4; i ++) {
                     
                     if (THIS.bytes[i] != 0) {
                         
@@ -636,7 +636,7 @@ static OSStatus	PerformThru(
         
         dispatch_once(&vsssOnceToken, ^{
     
-            //XThrowIfError(AudioSessionInitialize(NULL, NULL, rioInterruptionListener, (__bridge void *)self), "couldn't initialize audio session");
+            XThrowIfError(AudioSessionInitialize(NULL, NULL, rioInterruptionListener, (__bridge void *)self), "couldn't initialize audio session");
         });
         
         
@@ -696,20 +696,20 @@ static OSStatus	PerformThru(
 	return self;
 }
 
--(void)setUartByteTransmit:(UInt8)data{
-    
-    uartByteTransmit = data;
-    SignedByte bytes[8];
-    for (int i = 0; i < 8; i++) {
-        
-        int j = data >> i & (0x01);
-        bytes[i] = j;
-    }
-    self.bytes = bytes;
-    self.sartBit = YES;
-    [self sendByteMessage:5];
-    
-}
+//-(void)setUartByteTransmit:(UInt8)data{
+//    
+//    uartByteTransmit = data;
+//    SignedByte bytes[8];
+//    for (int i = 0; i < 8; i++) {
+//        
+//        int j = data >> i & (0x01);
+//        bytes[i] = j;
+//    }
+//    self.bytes = bytes;
+//    self.sartBit = YES;
+//    [self sendByteMessage:5];
+//    
+//}
 
 -(NSBlockOperation *)sendByteMessage:(uint8_t )data {
     
