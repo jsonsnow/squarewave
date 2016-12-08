@@ -707,6 +707,7 @@ static OSStatus	PerformThru(
     }
     self.bytes = bytes;
     self.sartBit = YES;
+    [self sendByteMessage:5];
     
 }
 
