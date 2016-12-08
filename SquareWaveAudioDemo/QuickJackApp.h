@@ -60,6 +60,10 @@ void propListener(	void *                  inClientData,
 
 
 @property (nonatomic, assign)   float                   micSampleValue;
+@property (nonatomic, assign) NSInteger currentFrame;
+@property (nonatomic, strong) NSOperationQueue *searilQueue;
+@property (nonatomic, assign) BOOL sartBit;
+@property (nonatomic, assign) SignedByte *bytes;
 
 @end
 	
