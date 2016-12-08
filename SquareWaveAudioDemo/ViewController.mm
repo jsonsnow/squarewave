@@ -17,10 +17,10 @@
 @implementation ViewController
 
 
--(NSBlockOperation *)sendByteMessage:(SignedByte* )data start:(BOOL)start{
+-(NSBlockOperation *)sendByteMessage:(uint8_t )data start:(BOOL)start{
     
     __block uint32_t i = 0;
-    __block SignedByte *sendData;
+    __block uint8_t sendData;
     sendData = data;
     NSBlockOperation *opertionOne = [NSBlockOperation blockOperationWithBlock:^{
         
@@ -38,9 +38,9 @@
         // waveformPeriod - 0.007
         [NSThread sleepForTimeInterval:0.02 - 0.007];
         if (self.autio.newByte == FALSE) {
-            //self.uartByteTransmit = sendData;
-            self.autio.bytes = data;
-            self.autio.sartBit = start;
+            self.autio.uartByteTransmit = sendData;
+//            self.autio.bytes = data;
+//            self.autio.sartBit = start;
             self.autio.newByte = TRUE;
 
             
@@ -66,23 +66,23 @@
 
 -(void)sendData:(uint8_t)data {
     
-    SignedByte byte1[4];
-    SignedByte byte2[4];
+    SignedByte byte[8];
+    //SignedByte byte2[4];
     for (int i = 0; i < 8; i++) {
         
         int j = data >> i & (0x01);
         
-        if (i <= 3) {
-            
-            byte1[i] = j;
-        } else {
-            byte2[i - 4] = j;
-        }
-        
+        byte[i] = j;
     }
 
-    [self.searilQueue addOperation:[self sendByteMessage:byte1 start:YES]];
-    [self.searilQueue addOperation:[self sendByteMessage:byte2 start:NO]];
+    [self.searilQueue addOperation:[self sendByteMessage:2 start:YES]];
+    for (int i = 0; i < 8; i ++) {
+        
+        [self.searilQueue addOperation:[self sendByteMessage:byte[i] start:YES]];
+    }
+    [self.searilQueue addOperation:[self sendByteMessage:3 start:YES]];
+    //[self.searilQueue addOperation:[self sendByteMessage:byte1 start:YES]];
+    //[self.searilQueue addOperation:[self sendByteMessage:byte2 start:NO]];
     //[self.autio setUartByteTransmit:0x4];
 
 }

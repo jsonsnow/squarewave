@@ -254,7 +254,7 @@ static OSStatus	PerformThru(
                         }
                         break;
                     case QUICK_JACK_STARTBITFALL:
-                        if (( SHORT < diff ) && (diff < LONG))
+                        if (( 48 < diff ) && (diff < 96))
                         {
                             // looks like we got a 1->0 transition.
                             bitNum = 0;
@@ -267,9 +267,10 @@ static OSStatus	PerformThru(
     //                        phase = phase2 = 0;
                             decState = QUICK_JACK_STARTBIT;
                         }
+                        //24 48
                         break;
                     case QUICK_JACK_DECODE:
-                        if (( SHORT < diff) && (diff < LONG)) {
+                        if (( 48 < diff) && (diff < 96)) {
                             // we got a valid sample.
                             if (bitNum < 8) {
                                 uartByte = ((uartByte >> 1) + (sample << 7));
@@ -413,142 +414,265 @@ static OSStatus	PerformThru(
             double waves;
             phase=0;
             
-            int sampleCount = 59;
+            int sampleCount = 191;
             //            int sampleCount = 23;
             
             //绘制正线波
            // SignedByte dataByte[1];
-            
-            if (THIS.sartBit) {
-                
-                for (int i = 0; i < 4; i ++) {
+            //代表开始位
+            if (THIS.uartByteTransmit == 2) {
+             
+                for(int j = 0; j < sampleCount; j++) {
+                    // int bit =  THIS->uartByteTransmit >> i & (0x01);
+                    waves = 0;
+                    waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
+                    waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
                     
-                    if (i == 0) {
+                    if (j >= 37 && j <= 47) {
                         
-                        for(int j = 0; j < sampleCount; j++) {
-                            // int bit =  THIS->uartByteTransmit >> i & (0x01);
-                            waves = 0;
-                            waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
-                            waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
-                            
-                            if (j >= 30 && j <= 48) {
-                                
-                                sinValues[i*sampleCount + j] = -(SInt32)waves;
-                                
-                            } else {
-                                sinValues[i*sampleCount + j] = (SInt32)waves;
-                            }
-                            //                    values[j] += values[j]<<16;
-                            //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
-                            phase++;
-                        }
-                    } else {
-                        
-                        
-                        if (THIS.bytes[i] != 0) {
-                            
-                            for(int j = 0; j < sampleCount; j++) {
-                                // int bit =  THIS->uartByteTransmit >> i & (0x01);
-                                waves = 0;
-                                waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
-                                waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
-                                
-                                if (j >= 20 && j <= 29) {
-                                    
-                                    sinValues[i*sampleCount + j] = -(SInt32)waves;
-                                    
-                                } else {
-                                    sinValues[i*sampleCount + j] = (SInt32)waves;
-                                }
-                                //                    values[j] += values[j]<<16;
-                                //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
-                                phase++;
-                            }
-
-                        } else {
-                            
-                            for(int j = 0; j < sampleCount; j++) {
-                                // int bit =  THIS->uartByteTransmit >> i & (0x01);
-                                waves = 0;
-                                waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
-                                waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
-                                
-                                if (j >= 30 && j <= 48) {
-                                    
-                                    sinValues[i*sampleCount + j] = -(SInt32)waves;
-                                    
-                                } else {
-                                    sinValues[i*sampleCount + j] = (SInt32)waves;
-                                }
-                                //                    values[j] += values[j]<<16;
-                                //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
-                                phase++;
-                            }
-
-                            
-                        }
-                    }
-                    
-                    for (int k = 4 * sampleCount; k< 256; k++) {
-                        sinValues[k] = 0;
-                    }
-                }
-                THIS.sartBit = FALSE;
-                THIS.newByte = FALSE;
-            } else {
-                
-                for (int i = 0; i < 4; i ++) {
-                    
-                    if (THIS.bytes[i] != 0) {
-                        
-                        for(int j = 0; j < sampleCount; j++) {
-                            // int bit =  THIS->uartByteTransmit >> i & (0x01);
-                            waves = 0;
-                            waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
-                            waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
-                            
-                            if (j >= 20 && j <= 29) {
-                                
-                                sinValues[i*sampleCount + j] = -(SInt32)waves;
-                                
-                            } else {
-                                sinValues[i*sampleCount + j] = (SInt32)waves;
-                            }
-                            //                    values[j] += values[j]<<16;
-                            //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
-                            phase++;
-                        }
+                        sinValues[sampleCount + j] = -(SInt32)waves;
                         
                     } else {
-                        
-                        for(int j = 0; j < sampleCount; j++) {
-                            // int bit =  THIS->uartByteTransmit >> i & (0x01);
-                            waves = 0;
-                            waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
-                            waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
-                            
-                            if (j >= 30 && j <= 48) {
-                                
-                                sinValues[i*sampleCount + j] = -(SInt32)waves;
-                                
-                            } else {
-                                sinValues[i*sampleCount + j] = (SInt32)waves;
-                            }
-                            //                    values[j] += values[j]<<16;
-                            //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
-                            phase++;
-                        }
-                        
-                        
+                        sinValues[sampleCount + j] = (SInt32)waves;
                     }
+                    //                    values[j] += values[j]<<16;
+                    //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
+                    phase++;
+                    
+                    
                 }
-                for (int k = 4 * sampleCount; k< 256; k++) {
-                    sinValues[k] = 1;
+                for (int k = sampleCount; k< 256; k++) {
+                    
+                    sinValues[k] = 0;
                 }
                 memcpy(ioData->mBuffers[0].mData, sinValues, ioData->mBuffers[0].mDataByteSize);
                 THIS.newByte = FALSE;
+                return err;
 
             }
+            
+            //代表停止位
+            if (THIS.uartByteTransmit == 3) {
+                
+                for(int j = 0; j < sampleCount; j++) {
+                    // int bit =  THIS->uartByteTransmit >> i & (0x01);
+                    waves = 0;
+                    waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
+                    waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
+                            
+                    if (j >= 47 && j <= 57) {
+                                
+                        sinValues[j] = -(SInt32)waves;
+                                
+                    } else {
+                        sinValues[j] = (SInt32)waves;
+                    }
+                        //                    values[j] += values[j]<<16;
+                        //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
+                    phase++;
+                
+                
+                }
+                for (int k = sampleCount; k< 256; k++) {
+                    
+                    sinValues[k] = 0;
+                }
+                memcpy(ioData->mBuffers[0].mData, sinValues, ioData->mBuffers[0].mDataByteSize);
+                THIS.newByte = FALSE;
+                return err;
+            }
+            if (THIS.uartByteTransmit == 0) {
+                
+                for(int j = 0; j < sampleCount; j++) {
+                    // int bit =  THIS->uartByteTransmit >> i & (0x01);
+                    waves = 0;
+                    waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
+                    waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
+                    
+                    if (j >= 47 && j <= 57) {
+                        
+                        sinValues[sampleCount + j] = -(SInt32)waves;
+                        
+                    } else {
+                        sinValues[sampleCount + j] = (SInt32)waves;
+                    }
+                    //                    values[j] += values[j]<<16;
+                    //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
+                    phase++;
+                    
+                    
+                }
+                for (int k = sampleCount; k< 256; k++) {
+                    
+                    sinValues[k] = 0;
+                }
+                memcpy(ioData->mBuffers[0].mData, sinValues, ioData->mBuffers[0].mDataByteSize);
+                THIS.newByte = FALSE;
+                return err;
+
+                
+            } else if (THIS.uartByteTransmit == 1) {
+                
+                for(int j = 0; j < sampleCount; j++) {
+                    // int bit =  THIS->uartByteTransmit >> i & (0x01);
+                    waves = 0;
+                    waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
+                    waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
+                    
+                    if (j >= 37 && j <= 47) {
+                        
+                        sinValues[sampleCount + j] = -(SInt32)waves;
+                        
+                    } else {
+                        sinValues[sampleCount + j] = (SInt32)waves;
+                    }
+                    //                    values[j] += values[j]<<16;
+                    //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
+                    phase++;
+                    
+                    
+                }
+                for (int k = sampleCount; k< 256; k++) {
+                    
+                    sinValues[k] = 0;
+                }
+                memcpy(ioData->mBuffers[0].mData, sinValues, ioData->mBuffers[0].mDataByteSize);
+                THIS.newByte = FALSE;
+                return err;
+
+                
+            }
+            
+//            if (THIS.sartBit) {
+//                
+//                for (int i = 0; i < 1; i ++) {
+//                    
+//                    if (i == 0) {
+//                        
+//                        for(int j = 0; j < sampleCount; j++) {
+//                            // int bit =  THIS->uartByteTransmit >> i & (0x01);
+//                            waves = 0;
+//                            waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
+//                            waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
+//                            
+//                            if (j >= 30 && j <= 48) {
+//                                
+//                                sinValues[i*sampleCount + j] = -(SInt32)waves;
+//                                
+//                            } else {
+//                                sinValues[i*sampleCount + j] = (SInt32)waves;
+//                            }
+//                            //                    values[j] += values[j]<<16;
+//                            //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
+//                            phase++;
+//                        }
+//                    } else {
+//                        
+//                        
+//                        if (THIS.bytes[i] != 0) {
+//                            
+//                            for(int j = 0; j < sampleCount; j++) {
+//                                // int bit =  THIS->uartByteTransmit >> i & (0x01);
+//                                waves = 0;
+//                                waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
+//                                waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
+//                                
+//                                if (j >= 20 && j <= 29) {
+//                                    
+//                                    sinValues[i*sampleCount + j] = -(SInt32)waves;
+//                                    
+//                                } else {
+//                                    sinValues[i*sampleCount + j] = (SInt32)waves;
+//                                }
+//                                //                    values[j] += values[j]<<16;
+//                                //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
+//                                phase++;
+//                            }
+//
+//                        } else {
+//                            
+//                            for(int j = 0; j < sampleCount; j++) {
+//                                // int bit =  THIS->uartByteTransmit >> i & (0x01);
+//                                waves = 0;
+//                                waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
+//                                waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
+//                                
+//                                if (j >= 30 && j <= 48) {
+//                                    
+//                                    sinValues[i*sampleCount + j] = -(SInt32)waves;
+//                                    
+//                                } else {
+//                                    sinValues[i*sampleCount + j] = (SInt32)waves;
+//                                }
+//                                //                    values[j] += values[j]<<16;
+//                                //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
+//                                phase++;
+//                            }
+//
+//                            
+//                        }
+//                    }
+//                    
+//                    for (int k = 4 * sampleCount; k< 256; k++) {
+//                        sinValues[k] = 0;
+//                    }
+//                }
+//                THIS.sartBit = FALSE;
+//                THIS.newByte = FALSE;
+//            } else {
+//                
+//                for (int i = 0; i < 4; i ++) {
+//                    
+//                    if (THIS.bytes[i] != 0) {
+//                        
+//                        for(int j = 0; j < sampleCount; j++) {
+//                            // int bit =  THIS->uartByteTransmit >> i & (0x01);
+//                            waves = 0;
+//                            waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
+//                            waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
+//                            
+//                            if (j >= 20 && j <= 29) {
+//                                
+//                                sinValues[i*sampleCount + j] = -(SInt32)waves;
+//                                
+//                            } else {
+//                                sinValues[i*sampleCount + j] = (SInt32)waves;
+//                            }
+//                            //                    values[j] += values[j]<<16;
+//                            //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
+//                            phase++;
+//                        }
+//                        
+//                    } else {
+//                        
+//                        for(int j = 0; j < sampleCount; j++) {
+//                            // int bit =  THIS->uartByteTransmit >> i & (0x01);
+//                            waves = 0;
+//                            waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
+//                            waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
+//                            
+//                            if (j >= 30 && j <= 48) {
+//                                
+//                                sinValues[i*sampleCount + j] = -(SInt32)waves;
+//                                
+//                            } else {
+//                                sinValues[i*sampleCount + j] = (SInt32)waves;
+//                            }
+//                            //                    values[j] += values[j]<<16;
+//                            //                   printf("hwSampleRate:%lf, phase:%d, values: %d\n", THIS->hwSampleRate, (unsigned int)phase, (int)values[j]);
+//                            phase++;
+//                        }
+//                        
+//                        
+//                    }
+//                }
+//                for (int k = 4 * sampleCount; k< 256; k++) {
+//                    sinValues[k] = 1;
+//                }
+//                memcpy(ioData->mBuffers[0].mData, sinValues, ioData->mBuffers[0].mDataByteSize);
+//                THIS.newByte = FALSE;
+//
+//            }
 
 //            for (int i = 0; i < 10; i++) {
 //                
