@@ -254,7 +254,7 @@ static OSStatus	PerformThru(
                         }
                         break;
                     case QUICK_JACK_STARTBITFALL:
-                        if (( 48 < diff ) && (diff < 96))
+                        if (( 128 < diff ) && (diff < 256))
                         {
                             // looks like we got a 1->0 transition.
                             bitNum = 0;
@@ -270,7 +270,7 @@ static OSStatus	PerformThru(
                         //24 48
                         break;
                     case QUICK_JACK_DECODE:
-                        if (( 48 < diff) && (diff < 96)) {
+                        if (( 128 < diff) && (diff < 256)) {
                             // we got a valid sample.
                             if (bitNum < 8) {
                                 uartByte = ((uartByte >> 1) + (sample << 7));
@@ -328,7 +328,7 @@ static OSStatus	PerformThru(
                                 }
                                 decState = QUICK_JACK_STARTBIT;
                             }
-                        } else if (diff > LONG) {
+                        } else if (diff > 256) {
     #ifdef DECDEBUGBYTE
     //						printf("diff too long %ld\n", diff);
     #endif
@@ -414,7 +414,7 @@ static OSStatus	PerformThru(
             double waves;
             phase=0;
             
-            int sampleCount = 191;
+            int sampleCount = 255;
             //            int sampleCount = 23;
             
             //绘制正线波
@@ -428,7 +428,7 @@ static OSStatus	PerformThru(
                     waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
                     waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
                     
-                    if (j >= 37 && j <= 47) {
+                    if (j >= 117 && j <= 127) {
                         
                         sinValues[sampleCount + j] = -(SInt32)waves;
                         
@@ -460,7 +460,7 @@ static OSStatus	PerformThru(
                     waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
                     waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
                             
-                    if (j >= 47 && j <= 57) {
+                    if (j >= 127 && j <= 138) {
                                 
                         sinValues[j] = -(SInt32)waves;
                                 
@@ -489,7 +489,7 @@ static OSStatus	PerformThru(
                     waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
                     waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
                     
-                    if (j >= 47 && j <= 57) {
+                    if (j >= 127 && j <= 138) {
                         
                         sinValues[sampleCount + j] = -(SInt32)waves;
                         
@@ -519,7 +519,7 @@ static OSStatus	PerformThru(
                     waves = sin(M_PI *2.0f*(j/(float)(sampleCount - 1)));
                     waves *= (AMPLITUDE); // <--------- make sure to divide by how many waves you're stacking
                     
-                    if (j >= 37 && j <= 47) {
+                    if (j >= 117 && j <= 128) {
                         
                         sinValues[sampleCount + j] = -(SInt32)waves;
                         
